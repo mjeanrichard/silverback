@@ -67,7 +67,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         }
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
@@ -179,7 +179,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         }
                                     }))
                         .AddDelegateSubscriber(
@@ -818,7 +818,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         }
                                     }))
                         .AddDelegateSubscriber(
@@ -912,7 +912,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         }
                                     }))
                         .AddDelegateSubscriber(
@@ -980,7 +980,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         }
                                     }))
                         .AddDelegateSubscriber(
@@ -1044,7 +1044,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         }
                                     }))
                         .AddDelegateSubscriber(
@@ -2090,7 +2090,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         }
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
@@ -2157,7 +2157,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         },
                                         Serializer = BinaryFileMessageSerializer.Default
                                     }))
@@ -2258,7 +2258,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         }
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
@@ -2331,7 +2331,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         }
                                     }))
                         .AddDelegateSubscriber(
@@ -2409,7 +2409,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         }
                                     }))
                         .AddDelegateSubscriber(

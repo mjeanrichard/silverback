@@ -159,7 +159,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         }
                                     }))
                         .AddDelegateSubscriber(
@@ -225,7 +225,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         }
                                     }))
                         .AddDelegateSubscriber(
@@ -520,7 +520,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         },
                                         MaxDegreeOfParallelism = 2
                                     }))

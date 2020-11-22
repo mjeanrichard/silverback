@@ -66,7 +66,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         },
                                         ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
                                     }))

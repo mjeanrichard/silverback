@@ -69,7 +69,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         },
                                         Encryption = new SymmetricEncryptionSettings
                                         {
@@ -238,7 +238,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             Configuration =
                                             {
                                                 GroupId = "consumer1",
-                                                AutoCommitIntervalMs = 100
+                                                AutoCommitIntervalMs = 50
                                             },
                                             Encryption = new SymmetricEncryptionSettings
                                             {
@@ -323,7 +323,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             Configuration =
                                             {
                                                 GroupId = "consumer1",
-                                                AutoCommitIntervalMs = 100
+                                                AutoCommitIntervalMs = 50
                                             },
                                             Encryption = new SymmetricEncryptionSettings
                                             {

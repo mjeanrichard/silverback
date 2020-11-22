@@ -134,6 +134,7 @@ namespace Silverback.Messaging.Broker
         public void Subscribe(IEnumerable<string> topics)
         {
             var topicsList = Check.NotNull(topics, nameof(topics)).AsReadOnlyList();
+            Check.NotEmpty(topicsList, nameof(topics));
             Check.HasNoNullsOrEmpties(topicsList, nameof(topics));
 
             lock (Subscription)

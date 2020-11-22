@@ -428,7 +428,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         },
                                         Batch = new BatchSettings
                                         {
@@ -620,7 +620,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         },
                                         MaxDegreeOfParallelism = 2,
                                         Batch = new BatchSettings

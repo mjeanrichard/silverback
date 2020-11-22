@@ -47,7 +47,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         },
                                         ExactlyOnceStrategy = ExactlyOnceStrategy.Log()
                                     }))
@@ -115,7 +115,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         },
                                         ExactlyOnceStrategy = ExactlyOnceStrategy.Log()
                                     }))
@@ -185,7 +185,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         },
                                         ExactlyOnceStrategy = ExactlyOnceStrategy.OffsetStore(),
                                         Events =
@@ -256,7 +256,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration =
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            AutoCommitIntervalMs = 50
                                         },
                                         ExactlyOnceStrategy = ExactlyOnceStrategy.OffsetStore(),
                                         Events =

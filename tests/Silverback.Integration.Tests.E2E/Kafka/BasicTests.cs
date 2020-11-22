@@ -49,7 +49,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName)))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint =>
+                                        endpoint
+                                            .WithConfiguration(config => { })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
@@ -74,16 +78,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
@@ -126,26 +133,32 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<TestEventOne>(new KafkaProducerEndpoint("topic1"))
-                                .AddOutbound<TestEventTwo>(new KafkaProducerEndpoint("topic2"))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint("topic1")
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    })
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint("topic2")
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                .AddKafkaOutbound<TestEventOne>(
+                                    "topic1",
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaOutbound<TestEventTwo>(
+                                    "topic2",
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    "topic1",
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            }))
+                                .AddKafkaInbound(
+                                    "topic2",
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddDelegateSubscriber(
                             (IInboundEnvelope<IEvent> envelope) =>
                             {
@@ -214,21 +227,21 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Serializer = new JsonMessageSerializer<TestEventOne>()
-                                    })
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        Serializer = new JsonMessageSerializer<TestEventOne>()
-                                    }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { })
+                                        .SerializeAsJson<TestEventOne>())
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })
+                                        .DeserializeJson<TestEventOne>()))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
@@ -266,16 +279,16 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        Serializer = new JsonMessageSerializer<TestEventOne>()
-                                    }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })
+                                        .DeserializeJson<TestEventOne>()))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
@@ -308,26 +321,32 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("topic1"))
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("topic2"))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint("topic1")
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    })
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint("topic2")
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    "topic1",
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    "topic2",
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    "topic1",
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            }))
+                                .AddKafkaInbound(
+                                    "topic2",
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
@@ -374,18 +393,23 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("topic1"))
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("topic2"))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint("topic1", "topic2")
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    "topic1",
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    "topic2",
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    new[] { "topic1", "topic2" },
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            }))).AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
@@ -431,25 +455,28 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    })
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
@@ -477,6 +504,58 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
+        public async Task OutboundAndInbound_MultipleConsumersDifferentConsumerGroup_ProducedAndConsumed()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer2";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            for (int i = 1; i <= 10; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.OutboundEnvelopes.Should().HaveCount(10);
+            Subscriber.InboundEnvelopes.Should().HaveCount(20);
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
+            DefaultTopic.GetCommittedOffsetsCount("consumer2").Should().Be(10);
+        }
+
+        [Fact]
         public async Task OutboundAndInbound_MultipleConsumerInstances_ProducedAndConsumed()
         {
             Host.ConfigureServices(
@@ -487,16 +566,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    },
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            }),
                                     2))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
@@ -537,18 +619,21 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = enableAutoCommit,
-                                            AutoCommitIntervalMs = 50,
-                                            CommitOffsetEach = enableAutoCommit ? -1 : 3
-                                        }
-                                    }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = enableAutoCommit;
+                                                config.AutoCommitIntervalMs = 50;
+                                                config.CommitOffsetEach = enableAutoCommit ? -1 : 3;
+                                            })))
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
@@ -592,16 +677,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
@@ -631,17 +719,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        ThrowIfUnhandled = true
-                                    }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })
+                                        .ThrowIfUnhandled()))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber((TestEventOne _) => received++))
                 .Run();
@@ -668,6 +759,58 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
+        public async Task Inbound_IgnoreUnhandledMessages_UnhandledMessageIgnored()
+        {
+            var received = 0;
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })
+                                        .IgnoreUnhandledMessages()))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddDelegateSubscriber((TestEventOne _) => received++))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(
+                new TestEventOne
+                {
+                    Content = "Handled message"
+                });
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            received.Should().Be(1);
+
+            await publisher.PublishAsync(
+                new TestEventTwo
+                {
+                    Content = "Unhandled message"
+                });
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            received.Should().Be(1);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
+        }
+
+        [Fact]
         public async Task DisconnectAsync_WithoutAutoCommit_PendingOffsetsCommitted()
         {
             int receivedMessages = 0;
@@ -679,18 +822,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            AutoCommitIntervalMs = 50,
-                                            CommitOffsetEach = 10
-                                        }
-                                    }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 10;
+                                            })))
                         .AddDelegateSubscriber((TestEventOne _) => receivedMessages++))
                 .Run();
 
@@ -730,18 +875,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            AutoCommitIntervalMs = 50,
-                                            CommitOffsetEach = 10
-                                        }
-                                    }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 10;
+                                            })))
                         .AddDelegateSubscriber((TestEventOne _) => receivedMessages++))
                 .Run();
 
@@ -780,16 +927,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
@@ -839,16 +989,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
@@ -909,17 +1062,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(5)))
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        MaxDegreeOfParallelism = 2
-                                    }))
+                                .AddKafkaOutbound<IIntegrationEvent>(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(config => { }))
+                                .AddKafkaInbound(
+                                    DefaultTopicName,
+                                    endpoint => endpoint
+                                        .WithConfiguration(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })
+                                        .LimitParallelism(2)))
                         .AddDelegateSubscriber(
                             async (TestEventWithKafkaKey message) =>
                             {

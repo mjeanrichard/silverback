@@ -29,7 +29,7 @@ namespace Silverback.Messaging
         {
             Names = names;
 
-            if (names == null)
+            if (names == null || names.Length == 0)
                 return;
 
             Name = names.Length > 1 ? "[" + string.Join(",", names) + "]" : names[0];
@@ -68,8 +68,8 @@ namespace Silverback.Messaging
         public int MaxDegreeOfParallelism { get; set; } = 10;
 
         /// <summary>
-        ///     Gets or sets the maximum amount of messages to be buffered in the consumer before being processed.
-        ///     when <see cref="ProcessPartitionsIndependently" /> is set to <c>true</c> (default) the limit will be
+        ///     Gets or sets the maximum number of messages to be consumed and enqueued waiting to be processed.
+        ///     When <see cref="ProcessPartitionsIndependently" /> is set to <c>true</c> (default) the limit will be
         ///     applied per partition.
         ///     The default is 1.
         /// </summary>
